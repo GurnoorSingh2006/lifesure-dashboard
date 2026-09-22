@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LifeSure Hybrid Programme Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F9; --panel:#FFFFFF; --ink:#0D2A4B; --muted:#5B6B80; --line:#DCE3EB;
+  --navy:#0D2A4B; --red:#E4002B; --green:#11875F; --amber:#C98A00; --grey:#8A97A8;
+  --green-bg:#E3F4EC; --amber-bg:#FBF0D6; --red-bg:#FCE4E8; --grey-bg:#EDF0F4;
+  --input:#F8FAFC;
+  --serif:"Source Serif 4", Cambria, Georgia, serif;
+  --sans:"Public Sans", Arial, Helvetica, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1A2E; --panel:#10243D; --ink:#E8EEF5; --muted:#9FB0C4; --line:#223B5A;
+    --green:#3CCB95; --amber:#F2B53A; --grey:#7D8CA0; --red:#FF4D6A;
+    --green-bg:#123A32; --amber-bg:#3A3118; --red-bg:#3E1A26; --grey-bg:#1B2F48; --input:#0D1F35;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1A2E; --panel:#10243D; --ink:#E8EEF5; --muted:#9FB0C4; --line:#223B5A;
+  --green:#3CCB95; --amber:#F2B53A; --grey:#7D8CA0; --red:#FF4D6A;
+  --green-bg:#123A32; --amber-bg:#3A3118; --red-bg:#3E1A26; --grey-bg:#1B2F48; --input:#0D1F35;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 48px}
+h1,h2{font-family:var(--serif);margin:0;font-weight:700}
+h1{font-size:clamp(24px,3.4vw,34px);line-height:1.15}
+h2{font-size:19px;margin-bottom:4px}
+p{margin:0}
+.sub{color:var(--muted);margin-top:6px;max-width:72ch}
+header{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.hdr-actions{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+/* The gate: the one bold element */
+.gate{background:var(--navy);color:#fff;border-radius:10px;padding:22px 24px;display:grid;grid-template-columns:1.1fr 2fr;gap:24px;margin-bottom:20px}
+.gate.open{background:#0E5A43}
+.gate-state{font-family:var(--serif);font-size:clamp(28px,4vw,42px);line-height:1.05}
+.gate-state small{display:block;font-family:var(--sans);font-size:14px;font-weight:500;opacity:.8;margin-top:8px}
+.tranches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-self:center}
+.tr{border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:12px}
+.tr b{font-family:var(--serif);font-size:24px;display:block}
+.tr span{font-size:13px;opacity:.85}
+.tr.live{background:rgba(255,255,255,.12);border-color:#fff}
+.tr.locked{opacity:.55}
+.blockers{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;font-size:13px}
+.blockers .chip{background:rgba(228,0,43,.9);padding:4px 10px;border-radius:20px}
+.blockers .chip.ok{background:rgba(255,255,255,.18)}
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.span-12{grid-column:span 12}.span-7{grid-column:span 7}.span-5{grid-column:span 5}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+/* table */
+.tbl-scroll{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;min-width:900px;font-size:13.5px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12.5px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.m b{display:block}
+td.m span{color:var(--muted);font-size:12.5px}
+input[type=number]{width:96px;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--input);color:var(--ink)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.s-green{background:var(--green-bg);color:var(--green)}
+.s-amber{background:var(--amber-bg);color:var(--amber)}
+.s-red{background:var(--red-bg);color:var(--red)}
+.s-grey{background:var(--grey-bg);color:var(--grey)}
+.s-track{background:var(--grey-bg);color:var(--ink)}
+
+/* utilisation */
+.util-row{display:grid;grid-template-columns:110px 1fr 56px;gap:12px;align-items:center;margin:14px 0}
+.util-row label{font-weight:600;font-size:14px}
+.bar{position:relative;height:28px;background:var(--grey-bg);border-radius:4px;overflow:hidden}
+.bar .fill{position:absolute;inset:0 auto 0 0;border-radius:4px;transition:width .25s}
+.bar .tick{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--muted)}
+.bar input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;margin:0}
+.util-val{font-family:var(--serif);font-weight:700;font-size:18px;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:10px}
+.seg button{border:0;border-radius:0;background:transparent}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.calc label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+.calc input{width:100%}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.big div{border-top:2px solid var(--line);padding-top:8px}
+.big b{font-family:var(--serif);font-size:24px;display:block}
+.big span{font-size:12.5px;color:var(--muted)}
+.vnb-chart{margin-top:16px}
+.vnb-row{display:grid;grid-template-columns:100px 1fr 54px;gap:10px;align-items:center;margin:8px 0;font-size:13.5px}
+.vnb-row .bar{height:22px}
+
+/* quality */
+.q{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+.q h3{font-size:14px;margin:0 0 10px;font-weight:600}
+.qbar{display:grid;grid-template-columns:70px 1fr 40px;gap:8px;align-items:center;font-size:12.5px;margin:6px 0}
+.qbar .bar{height:16px}
+
+footer{font-size:12.5px;color:var(--muted);margin-top:20px;max-width:100ch}
+
+@media (max-width:900px){
+  .span-7,.span-5{grid-column:span 12}
+  .gate{grid-template-columns:1fr}
+  .q{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .tranches{grid-template-columns:1fr}
+  .big{grid-template-columns:1fr}
+  .calc{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.bar .fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>LifeSure Hybrid programme dashboard</h1>
+    <p class="sub">Enter actuals as cohorts mature. Every status and the capital gate recalculate from the decision rules in the strategy. Blank fields read as not available, never as on track.</p>
+  </div>
+  <div class="hdr-actions">
+    <button id="loadCase" type="button">Load case baselines</button>
+    <button id="clearAll" type="button">Clear actuals</button>
+    <button id="theme" type="button">Switch theme</button>
+  </div>
+</header>
+
+<section class="gate" id="gate" aria-live="polite">
+  <div>
+    <div class="gate-state" id="gateState">Tranche 2 locked<small id="gateSub"></small></div>
+  </div>
+  <div class="tranches">
+    <div class="tr live" id="t1"><b>₹30 cr</b><span>Tranche 1 · Months 0–12<br>Pilot, measurement, readiness</span></div>
+    <div class="tr locked" id="t2"><b>₹55 cr</b><span>Tranche 2 · Months 13–18<br>Only combinations that pass</span></div>
+    <div class="tr locked" id="t3"><b>₹80 cr</b><span>Tranche 3 · Years 2–3<br>Conditional increments</span></div>
+  </div>
+  <div class="blockers" id="blockers"></div>
+</section>
+
+<div class="grid">
+  <section class="panel span-12">
+    <h2>Measures and decision rules</h2>
+    <p class="note" style="margin-top:0">Amber means within the stated tolerance of a gate. Hold or remediate before expanding.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Measure</th><th>Case position</th><th>Actual</th><th>Decision rule</th><th>Status</th><th>Owner and cadence</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel span-7">
+    <h2>Critical-system utilisation</h2>
+    <p class="note" style="margin-top:0">Drag a bar to set utilisation. The dashed line marks the 85% operating ceiling.</p>
+    <div class="seg" role="group" aria-label="Utilisation view">
+      <button type="button" data-view="current" aria-pressed="false">Current</button>
+      <button type="button" data-view="stress" aria-pressed="true">At +40% volume</button>
+    </div>
+    <div id="util"></div>
+    <div class="legend"><span><i style="background:var(--green)"></i>≤85% expand</span><span><i style="background:var(--amber)"></i>85–95% hold and remediate</span><span><i style="background:var(--red)"></i>&gt;95% pause campaigns · &gt;100% capacity breach</span></div>
+    <p class="note" id="uplift"></p>
+  </section>
+
+  <section class="panel span-5">
+    <h2>Hybrid value test</h2>
+    <p class="note" style="margin-top:0">Normalised new-business APE of 100, three new-business years, compared with Protect Value (9% CAGR, 27% margin).</p>
+    <div class="calc">
+      <div><label for="cagr">Hybrid premium CAGR (%)</label><input type="number" id="cagr" value="14" step="0.5" min="0" max="40"></div>
+      <div><label for="margin">Hybrid VNB margin (%)</label><input type="number" id="margin" value="20" step="0.1" min="0" max="40"></div>
+      <div><label for="disc">Discount rate (%)</label><input type="number" id="disc" value="12" step="0.5" min="0" max="30"></div>
+      <div><label for="extra">Extra investment vs Protect (₹ cr)</label><input type="number" id="extra" value="65" step="5" min="0"></div>
+    </div>
+    <div class="big">
+      <div><b id="pvH">–</b><span>PV of Hybrid VNB, years 1–3</span></div>
+      <div><b id="gap">–</b><span>Gap to Protect Value (76.74)</span></div>
+      <div><b id="parity">–</b><span>Margin needed for parity</span></div>
+    </div>
+    <div class="vnb-chart" id="vnbChart"></div>
+    <p class="note" id="vnbNote"></p>
+  </section>
+
+  <section class="panel span-12">
+    <h2>Customer quality against the gates</h2>
+    <div class="q" id="quality"></div>
+    <p class="note">Case figures from Exhibits 1 and 6. The volume persistency figure differs between exhibits (81% and 79%); 79% is used as the conservative value until reconciled. Pilot persistency is a six-month proxy, not a mature 13-month cohort.</p>
+  </section>
+</div>
+
+<footer>Source: LifeSure case, Exhibits 1–6, and the thresholds proposed in the solution. All gates are initial proposals to validate during the pilot. Scenario outputs are planning references, not forecasts. Filters for cohort, income band, age band, channel, partner, product, region and first-time-buyer status apply once cohort-level data is connected.</footer>
+</div>
+
+<script>
+(function(){
+const KEY='lifesure-dash-v1';
+const CASE={npv:'',vnb:20,cust:'',persV:88,persVol:79,compV:3.2,compVol:6.1,contacts:2.1,xsell:9,acq:'',spend:0};
+const MEASURES=[
+ {id:'npv',name:'Incremental NPV vs Protect Value',unit:'₹ cr',casePos:'Not supplied',rule:'Positive after full costs, capital and cannibalisation; also positive in the downside case',owner:'CFO and Actuary, quarterly',gate:true,
+  st:v=>v>0?'green':'red'},
+ {id:'vnb',name:'VNB margin',unit:'%',casePos:'Hybrid scenario 20%',rule:'24.69% is three-year parity before extra investment; below 20% is red',owner:'CFO and Actuary, monthly',
+  st:v=>v>=24.69?'green':v>=20?'amber':'red'},
+ {id:'cust',name:'Unique active customers',unit:'mn',casePos:'Year 3 scenario 6.0 mn',rule:'Compare with the revised funded plan; exclude replacements and duplicates. Amber at 90–100% of 6.0 mn',owner:'Distribution and data, monthly',
+  st:v=>v>=6?'green':v>=5.4?'amber':'red'},
+ {id:'persV',name:'13-month persistency, value cohorts',unit:'%',casePos:'88%',rule:'Preserve at 88% or above; amber within 3 points',owner:'Customer experience, monthly',gate:true,
+  st:v=>v>=88?'green':v>=85?'amber':'red'},
+ {id:'persVol',name:'13-month persistency, volume cohorts',unit:'%',casePos:'79–81%',rule:'85% or above in mature cohorts before broad expansion; amber within 3 points',owner:'Customer experience, monthly',gate:true,
+  st:v=>v>=85?'green':v>=82?'amber':'red'},
+ {id:'compV',name:'Complaints per 1,000, value',unit:'',casePos:'3.2',rule:'3.2 or below; amber up to 4.0',owner:'Customer experience, weekly',gate:true,
+  st:v=>v<=3.2?'green':v<=4?'amber':'red'},
+ {id:'compVol',name:'Complaints per 1,000, volume',unit:'',casePos:'6.1',rule:'4.0 or below before broad expansion; amber up to 5.0',owner:'Customer experience, weekly',gate:true,
+  st:v=>v<=4?'green':v<=5?'amber':'red'},
+ {id:'contacts',name:'Service contacts per policy per year, volume',unit:'',casePos:'Value 1.3, volume 2.1',rule:'1.6 or below through fewer failed journeys; amber up to 1.9',owner:'COO, monthly',
+  st:v=>v<=1.6?'green':v<=1.9?'amber':'red'},
+ {id:'xsell',name:'Cross-sell after 12 months, volume',unit:'%',casePos:'Value 18%, volume 9%',rule:'9% is the starting assumption; count only profitable additional policies. No forced target',owner:'Distribution, quarterly',
+  st:v=>v>=9?'green':'amber'},
+ {id:'acq',name:'Acquisition cost per retained customer',unit:'₹',casePos:'Not supplied in rupees',rule:'Commissions, media, partner and onboarding cost divided by customers active at month 13',owner:'Channel finance, monthly',
+  st:v=>'track'},
+ {id:'spend',name:'Programme capital released',unit:'₹ cr',casePos:'₹165 cr ceiling',rule:'Within the approved tranche (₹30 cr until tranche 2 opens)',owner:'CFO and risk, monthly',gate:true,
+  st:v=>v<=30?'green':'red'}
+];
+const SYS=[
+ {id:'service',name:'Service',cur:79,stress:112},
+ {id:'issuance',name:'Issuance',cur:71,stress:104},
+ {id:'uw',name:'Underwriting',cur:67,stress:96},
+ {id:'sales',name:'Sales',cur:74,stress:91},
+ {id:'tech',name:'Technology',cur:63,stress:89}
+];
+const LABEL={green:'On track',amber:'Hold',red:'Breach',grey:'Not available',track:'Tracking'};
+
+let state=load()||{vals:Object.assign({},CASE),view:'stress',util:null,calc:{cagr:14,margin:20,disc:12,extra:65}};
+if(!state.util) state.util=utilDefaults(state.view);
+
+function utilDefaults(v){const o={};SYS.forEach(s=>o[s.id]=v==='current'?s.cur:s.stress);return o;}
+function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+const num=v=>v===''||v===null||v===undefined||isNaN(Number(v))?null:Number(v);
+const col=s=>({green:'var(--green)',amber:'var(--amber)',red:'var(--red)'}[s]||'var(--grey)');
+const utilStatus=v=>v<=85?'green':v<=95?'amber':'red';
+
+function statusOf(m){const v=num(state.vals[m.id]);return v===null?'grey':m.st(v);}
+
+function renderRows(){
+  const tb=document.getElementById('rows');tb.innerHTML='';
+  MEASURES.forEach(m=>{
+    const s=statusOf(m);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="m"><b>${m.name}</b>${m.gate?'<span>Capital gate</span>':''}</td>
+      <td>${m.casePos}</td>
+      <td><input type="number" step="any" aria-label="${m.name} actual" data-id="${m.id}" value="${state.vals[m.id]??''}"> <span class="note">${m.unit}</span></td>
+      <td>${m.rule}</td>
+      <td><span class="pill s-${s}" id="pill-${m.id}">${LABEL[s]}</span></td>
+      <td>${m.owner}</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{
+    state.vals[e.target.dataset.id]=e.target.value;save();
+    const m=MEASURES.find(x=>x.id===e.target.dataset.id);const s=statusOf(m);
+    const p=document.getElementById('pill-'+m.id);p.className='pill s-'+s;p.textContent=LABEL[s];
+    renderGate();renderQuality();
+  }));
+}
+
+function renderUtil(){
+  const box=document.getElementById('util');box.innerHTML='';
+  SYS.forEach(s=>{
+    const v=state.util[s.id];const st=utilStatus(v);
+    const row=document.createElement('div');row.className='util-row';
+    row.innerHTML=`<label for="u-${s.id}">${s.name}</label>
+      <div class="bar"><div class="fill" style="width:${Math.min(v,125)/125*100}%;background:${col(st)}"></div>
+      <div class="tick" style="left:${85/125*100}%"></div>
+      <input type="range" id="u-${s.id}" min="40" max="125" value="${v}" aria-valuetext="${v}%"></div>
+      <div class="util-val">${v}%</div>`;
+    row.querySelector('input').addEventListener('input',e=>{state.util[s.id]=Number(e.target.value);save();renderUtil();renderGate();});
+    box.appendChild(row);
+  });
+  const up=SYS.map(s=>({n:s.name,u:state.util[s.id]/85-1})).filter(x=>x.u>0).sort((a,b)=>b.u-a.u);
+  document.getElementById('uplift').textContent=up.length?
+    'Effective capacity needed to operate at 85%: '+up.map(x=>`${x.n} +${(x.u*100).toFixed(1)}%`).join(', ')+'. These are effective-capacity estimates, not staffing requirements.':
+    'All systems are at or below the 85% ceiling. Expansion is eligible on capacity grounds.';
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
+}
+
+function renderGate(){
+  const blockers=[];
+  MEASURES.filter(m=>m.gate).forEach(m=>{const s=statusOf(m);if(s!=='green')blockers.push({t:m.name+(s==='grey'?' (no data)':''),ok:false});});
+  const maxU=Math.max(...SYS.map(s=>state.util[s.id]));
+  if(maxU>85){const worst=SYS.reduce((a,b)=>state.util[a.id]>state.util[b.id]?a:b);blockers.push({t:`${worst.name} utilisation ${state.util[worst.id]}%`,ok:false});}
+  const open=blockers.length===0;
+  const g=document.getElementById('gate');g.classList.toggle('open',open);
+  document.getElementById('gateState').innerHTML=(open?'Tranche 2 eligible':'Tranche 2 locked')+
+    `<small id="gateSub">${open?'Every capital gate is green. Release ₹55 cr only for the combinations that passed.':blockers.length+' gate'+(blockers.length>1?'s':'')+' must turn green before ₹55 cr can be released.'}</small>`;
+  document.getElementById('t2').className='tr '+(open?'live':'locked');
+  const b=document.getElementById('blockers');
+  b.innerHTML=open?'<span class="chip ok">Tranche 3 still requires quarterly reforecast of value, cash and service</span>':blockers.map(x=>`<span class="chip">${x.t}</span>`).join('');
+}
+
+function calc(){
+  const c=state.calc;const g=c.cagr/100,m=c.margin/100,r=c.disc/100;
+  let pvH=0,sumAPE=0;const vals=[];
+  for(let t=1;t<=3;t++){const ape=100*Math.pow(1+g,t);const d=Math.pow(1+r,t);pvH+=ape*m/d;sumAPE+=ape/d;vals.push(ape*m);}
+  let pvP=0;const valsP=[];
+  for(let t=1;t<=3;t++){const ape=100*Math.pow(1.09,t);pvP+=ape*.27/Math.pow(1+r,t);valsP.push(ape*.27);}
+  const parity=pvP/sumAPE*100;const gap=pvH-pvP;
+  document.getElementById('pvH').textContent=pvH.toFixed(2);
+  const ge=document.getElementById('gap');ge.textContent=(gap>=0?'+':'')+gap.toFixed(2);ge.style.color=gap>=0?'var(--green)':'var(--red)';
+  document.getElementById('parity').textContent=parity.toFixed(2)+'%';
+  const max=Math.max(...vals,...valsP);
+  document.getElementById('vnbChart').innerHTML=[1,2,3].map(t=>`
+    <div class="vnb-row"><span>Year ${t} Hybrid</span><div class="bar"><div class="fill" style="width:${vals[t-1]/max*100}%;background:var(--navy)"></div></div><b>${vals[t-1].toFixed(1)}</b></div>
+    <div class="vnb-row"><span>Year ${t} Protect</span><div class="bar"><div class="fill" style="width:${valsP[t-1]/max*100}%;background:var(--grey)"></div></div><b>${valsP[t-1].toFixed(1)}</b></div>`).join('');
+  document.getElementById('vnbNote').textContent=gap>=0?
+    `At these inputs Hybrid clears Protect Value on discounted three-year VNB. It still has to cover the extra ₹${c.extra} cr programme investment, unless that cost is already inside VNB expense assumptions.`:
+    `Hybrid needs ${Math.abs(gap).toFixed(2)} more discounted VNB index points, plus the present value of the extra ₹${c.extra} cr investment, to beat Protect Value. Per ₹100 cr of starting APE, the shortfall is about ₹${Math.abs(gap).toFixed(1)} cr before investment.`;
+}
+
+function renderQuality(){
+  const v=k=>num(state.vals[k]);
+  const groups=[
+    {h:'13-month persistency (%)',max:100,rows:[['Value',88,v('persV'),88,true],['Volume',79,v('persVol'),85,true]]},
+    {h:'Complaints per 1,000',max:7,rows:[['Value',3.2,v('compV'),3.2,false],['Volume',6.1,v('compVol'),4,false]]},
+    {h:'Service contacts per policy',max:2.5,rows:[['Value',1.3,null,null,false],['Volume',2.1,v('contacts'),1.6,false]]}
+  ];
+  document.getElementById('quality').innerHTML=groups.map(g=>`<div><h3>${g.h}</h3>`+g.rows.map(r=>{
+    const [n,cs,act,gate,hi]=r;
+    const shown=act??cs;const ok=gate===null?null:(hi?shown>=gate:shown<=gate);
+    const c=ok===null?'var(--grey)':ok?'var(--green)':'var(--red)';
+    return `<div class="qbar"><span>${n}${act!==null?'':' (case)'}</span><div class="bar"><div class="fill" style="width:${shown/g.max*100}%;background:${c}"></div>${gate!==null?`<div class="tick" style="left:${gate/g.max*100}%"></div>`:''}</div><b>${shown}</b></div>`;
+  }).join('')+'</div>').join('');
+}
+
+['cagr','margin','disc','extra'].forEach(id=>{
+  const el=document.getElementById(id);el.value=state.calc[id];
+  el.addEventListener('input',()=>{const n=Number(el.value);if(!isNaN(n)){state.calc[id]=n;save();calc();}});
+});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;state.util=utilDefaults(state.view);save();renderUtil();renderGate();}));
+document.getElementById('loadCase').addEventListener('click',()=>{state.vals=Object.assign({},CASE);save();renderRows();renderGate();renderQuality();});
+document.getElementById('clearAll').addEventListener('click',()=>{Object.keys(state.vals).forEach(k=>state.vals[k]='');save();renderRows();renderGate();renderQuality();});
+document.getElementById('theme').addEventListener('click',()=>{
+  const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme=dark?'light':'dark';try{localStorage.setItem(KEY+'-theme',r.dataset.theme)}catch(e){}
+});
+try{const t=localStorage.getItem(KEY+'-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}
+
+renderRows();renderUtil();renderGate();calc();renderQuality();
+})();
+</script>
+</body>
+</html>
